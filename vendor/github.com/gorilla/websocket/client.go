@@ -274,7 +274,17 @@ func (d *Dialer) DialContext(ctx context.Context, urlStr string, requestHeader h
 			return nil, nil, err
 		}
 		if proxyURL != nil {
-			dialer, err := proxy_FromURL(proxyURL, netDialerFunc(netDial))
+			proxyDialer := &netDialerFunc{fn: netDial}
+			if proxyURL.Scheme == "https" {
+				proxyDialer.usesTLS = true
+				proxyDialer.fn = func(network, addr string) (net.Conn, error) {
+					t := tls.Dialer{}
+					t.Config = d.TLSClientConfig
+					t.NetDialer = &net.Dialer{}
+					return t.DialContext(ctx, network, addr)
+				}
+			}
+			dialer, err := proxy_FromURL(proxyURL, proxyDialer)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -348,8 +358,8 @@ func (d *Dialer) DialContext(ctx context.Context, urlStr string, requestHeader h
 	}
 
 	if resp.StatusCode != 101 ||
-		!strings.EqualFold(resp.Header.Get("Upgrade"), "websocket") ||
-		!strings.EqualFold(resp.Header.Get("Connection"), "upgrade") ||
+		!tokenListContainsValue(resp.Header, "Upgrade", "websocket") ||
+		!tokenListContainsValue(resp.Header, "Connection", "upgrade") ||
 		resp.Header.Get("Sec-Websocket-Accept") != computeAcceptKey(challengeKey) {
 		// Before closing the network connection on return from this
 		// function, slurp up some of the response to aid application

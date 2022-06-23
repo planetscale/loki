@@ -523,7 +523,7 @@ github.com/gophercloud/gophercloud/pagination
 # github.com/gorilla/mux v1.8.0
 ## explicit; go 1.12
 github.com/gorilla/mux
-# github.com/gorilla/websocket v1.4.2
+# github.com/gorilla/websocket v1.4.2 => github.com/philipatl/websocket v1.4.3-0.20211206152948-d16969baa130
 ## explicit; go 1.12
 github.com/gorilla/websocket
 # github.com/grafana/dskit v0.0.0-20220518152339-07166f9e6d96

@@ -334,3 +334,7 @@ replace github.com/prometheus/prometheus => github.com/prometheus/prometheus v0.
 // Replace memberlist with our fork which includes some fixes that haven't been
 // merged upstream yet.
 replace github.com/hashicorp/memberlist => github.com/grafana/memberlist v0.3.1-0.20220425183535-6b97a09b7167
+
+// Until gorilla/websocket adds support for https proxies:
+// https://github.com/gorilla/websocket/pull/740
+replace github.com/gorilla/websocket v1.4.2 => github.com/philipatl/websocket v1.4.3-0.20211206152948-d16969baa130
